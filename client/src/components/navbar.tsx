@@ -14,8 +14,11 @@ export default function Navbar() {
           <Link href="/">
             <a className="text-xl font-bold">FitYog</a>
           </Link>
-          <Link href="/">
+          <Link href="/dashboard">
             <a className="text-sm">Dashboard</a>
+          </Link>
+          <Link href="/ai-assistant">
+            <a className="text-sm">AI Assistant</a>
           </Link>
           <Link href="/experts">
             <a className="text-sm">Experts</a>
