@@ -9,6 +9,9 @@ export const users = pgTable("users", {
   isExpert: boolean("is_expert").notNull().default(false),
   bio: text("bio"),
   specialties: text("specialties").array(),
+  rating: integer("rating"),
+  photoUrl: text("photo_url"),
+  experience: text("experience"),
 });
 
 export const exercises = pgTable("exercises", {
@@ -25,6 +28,8 @@ export const bookings = pgTable("bookings", {
   userId: integer("user_id").notNull(),
   expertId: integer("expert_id").notNull(),
   date: timestamp("date").notNull(),
+  time: text("time").notNull(),
+  contactInfo: text("contact_info").notNull(),
   status: text("status").notNull().default("pending"),
 });
 
@@ -34,6 +39,9 @@ export const insertUserSchema = createInsertSchema(users).pick({
   isExpert: true,
   bio: true,
   specialties: true,
+  rating: true,
+  photoUrl: true,
+  experience: true,
 });
 
 export const insertExerciseSchema = createInsertSchema(exercises);

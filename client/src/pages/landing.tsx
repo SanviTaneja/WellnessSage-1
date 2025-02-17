@@ -7,21 +7,31 @@ export default function Landing() {
 
   return (
     <div className="container mx-auto p-6 space-y-12">
-      {/* Hero Section */}
-      <section className="text-center space-y-6">
-        <h1 className="text-4xl font-bold tracking-tight">
-          Your Personal AI-Powered Fitness Journey
-        </h1>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-          FitYog combines artificial intelligence with expert guidance to create 
-          a personalized wellness experience tailored just for you.
-        </p>
+      {/* Hero Section with Image */}
+      <section className="relative">
+        <div 
+          className="w-full h-[400px] rounded-lg overflow-hidden bg-cover bg-center"
+          style={{
+            backgroundImage: 'url("https://images.unsplash.com/photo-1599447292325-2cffaa79bcbb")',
+          }}
+        />
+        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+          <div className="text-center text-white space-y-6 p-6">
+            <h1 className="text-4xl font-bold tracking-tight">
+              Your Personal AI-Powered Fitness Journey
+            </h1>
+            <p className="text-lg max-w-2xl mx-auto">
+              FitYog combines artificial intelligence with expert guidance to create 
+              a personalized wellness experience tailored just for you.
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* Feature Cards */}
       <div className="grid gap-6 md:grid-cols-3 max-w-5xl mx-auto">
         <div 
-          className="relative group cursor-pointer hover:shadow-lg transition-shadow p-6 rounded-lg border"
+          className="relative group cursor-pointer hover:shadow-lg transition-shadow p-6 rounded-lg border bg-background"
           onClick={() => navigate("/ai-assistant")}
         >
           <div className="flex items-center gap-2 mb-4">
@@ -38,7 +48,7 @@ export default function Landing() {
         </div>
 
         <div 
-          className="relative group cursor-pointer hover:shadow-lg transition-shadow p-6 rounded-lg border"
+          className="relative group cursor-pointer hover:shadow-lg transition-shadow p-6 rounded-lg border bg-background"
           onClick={() => navigate("/dashboard")}
         >
           <div className="flex items-center gap-2 mb-4">
@@ -55,7 +65,7 @@ export default function Landing() {
         </div>
 
         <div 
-          className="relative group cursor-pointer hover:shadow-lg transition-shadow p-6 rounded-lg border"
+          className="relative group cursor-pointer hover:shadow-lg transition-shadow p-6 rounded-lg border bg-background"
           onClick={() => navigate("/experts")}
         >
           <div className="flex items-center gap-2 mb-4">
@@ -80,12 +90,6 @@ export default function Landing() {
           with modern artificial intelligence. Our mission is to make personalized fitness
           and wellness accessible to everyone, regardless of their experience level.
         </p>
-        <div 
-          className="aspect-video rounded-lg overflow-hidden bg-cover bg-center"
-          style={{
-            backgroundImage: 'url("https://images.unsplash.com/photo-1599447292325-2cffaa79bcbb")',
-          }}
-        />
       </section>
     </div>
   );
