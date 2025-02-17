@@ -43,8 +43,10 @@ export async function registerRoutes(app: Express): Server {
     if (!req.user) return res.sendStatus(401);
 
     try {
+      console.log("Received chat request with prompt:", req.body.prompt);
+
       const response = await openai.chat.completions.create({
-        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
+        model: "gpt-3.5-turbo", // Using a more stable model
         messages: [
           {
             role: "system",
@@ -92,9 +94,29 @@ Focus on safe, beginner-friendly options unless specifically asked for advanced 
         response_format: { type: "json_object" },
       });
 
-      res.json(JSON.parse(response.choices[0].message.content));
-    } catch (error) {
-      res.status(500).json({ message: "Failed to get AI recommendations" });
+      console.log("OpenAI response received:", response.choices[0].message);
+
+      if (!response.choices[0].message.content) {
+        throw new Error("No response content from OpenAI");
+      }
+
+      const parsedResponse = JSON.parse(response.choices[0].message.content);
+      console.log("Parsed response:", parsedResponse);
+
+      res.json(parsedResponse);
+    } catch (error: any) {
+      console.error("OpenAI API Error:", error);
+
+      let errorMessage = "Failed to get AI recommendations";
+      if (error.response) {
+        console.error("OpenAI API Error Response:", error.response.data);
+        errorMessage = error.response.data?.error?.message || errorMessage;
+      }
+
+      res.status(500).json({ 
+        message: errorMessage,
+        error: error.message 
+      });
     }
   });
 
