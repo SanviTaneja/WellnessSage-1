@@ -26,7 +26,38 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/experts", async (req, res) => {
     if (!req.user) return res.sendStatus(401);
-    const experts = await storage.getExperts();
+    const experts = [
+      {
+        id: 1,
+        username: "Sarah Chen",
+        isExpert: true,
+        bio: "Certified yoga instructor with 8 years of experience in Hatha and Vinyasa yoga. Specialized in helping beginners develop proper form and breathing techniques.",
+        specialties: ["Hatha Yoga", "Vinyasa Flow", "Meditation", "Breathwork"],
+        rating: 4.9,
+        photoUrl: "https://images.unsplash.com/photo-1594381898411-846e7d193883",
+        experience: "8+ years teaching",
+      },
+      {
+        id: 2,
+        username: "Mike Rodriguez",
+        isExpert: true,
+        bio: "Former professional athlete turned fitness coach. Specializing in strength training and HIIT workouts. Passionate about helping clients achieve their fitness goals.",
+        specialties: ["Strength Training", "HIIT", "Sports Conditioning", "Nutrition"],
+        rating: 4.8,
+        photoUrl: "https://images.unsplash.com/photo-1594381898411-846e7d193883",
+        experience: "10+ years coaching",
+      },
+      {
+        id: 3,
+        username: "Priya Patel",
+        isExpert: true,
+        bio: "Ashtanga yoga practitioner and mindfulness coach. Combines traditional yoga practices with modern wellness techniques for a holistic approach to health.",
+        specialties: ["Ashtanga Yoga", "Mindfulness", "Wellness Coaching", "Power Yoga"],
+        rating: 4.7,
+        photoUrl: "https://images.unsplash.com/photo-1594381898411-846e7d193883",
+        experience: "6+ years teaching",
+      },
+    ];
     res.json(experts);
   });
 
@@ -113,9 +144,9 @@ Focus on safe, beginner-friendly options unless specifically asked for advanced 
         errorMessage = error.response.data?.error?.message || errorMessage;
       }
 
-      res.status(500).json({ 
+      res.status(500).json({
         message: errorMessage,
-        error: error.message 
+        error: error.message
       });
     }
   });
