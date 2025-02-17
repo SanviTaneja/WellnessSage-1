@@ -15,12 +15,25 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Exercise, insertExerciseSchema } from "@shared/schema";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getAIRecommendations } from "@/lib/openai";
+import { getAIRecommendations, type AIChatResponse } from "@/lib/openai";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { useState } from "react";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 
 export default function Dashboard() {
   const { user } = useAuth();
-  const [aiResponse, setAiResponse] = useState("");
+  const [aiResponse, setAiResponse] = useState<AIChatResponse | null>(null);
 
   const form = useForm({
     resolver: zodResolver(insertExerciseSchema),
@@ -49,7 +62,7 @@ export default function Dashboard() {
   const aiMutation = useMutation({
     mutationFn: getAIRecommendations,
     onSuccess: (data) => {
-      setAiResponse(data.message);
+      setAiResponse(data);
     },
   });
 
@@ -121,23 +134,154 @@ export default function Dashboard() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="md:col-span-2">
         <CardHeader>
-          <CardTitle>AI Assistant</CardTitle>
+          <CardTitle>AI Health Assistant</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Input
-            placeholder="Ask for exercise recommendations..."
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                aiMutation.mutate(e.currentTarget.value);
-                e.currentTarget.value = "";
-              }
-            }}
-          />
-          <ScrollArea className="h-[300px] rounded-md border p-4">
-            {aiResponse && <p className="text-sm">{aiResponse}</p>}
-          </ScrollArea>
+          <div className="flex gap-2">
+            <Input
+              className="flex-1"
+              placeholder="Describe your fitness goals or health concerns..."
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  aiMutation.mutate(e.currentTarget.value);
+                  e.currentTarget.value = "";
+                }
+              }}
+            />
+            <Button
+              variant="outline"
+              onClick={() => {
+                setAiResponse(null);
+              }}
+            >
+              Clear
+            </Button>
+          </div>
+
+          {aiMutation.isPending && (
+            <div className="text-center py-4 text-muted-foreground">
+              Analyzing your request...
+            </div>
+          )}
+
+          {aiResponse && (
+            <ScrollArea className="h-[600px] rounded-md border p-4">
+              <div className="space-y-6">
+                <p className="text-sm">{aiResponse.message}</p>
+
+                <Tabs defaultValue="asanas">
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="asanas">Asanas</TabsTrigger>
+                    <TabsTrigger value="exercises">Exercises</TabsTrigger>
+                    <TabsTrigger value="resources">Resources</TabsTrigger>
+                  </TabsList>
+
+                  <TabsContent value="asanas">
+                    <Accordion type="single" collapsible className="w-full">
+                      {aiResponse.asanas.map((asana, index) => (
+                        <AccordionItem key={index} value={`asana-${index}`}>
+                          <AccordionTrigger>
+                            <div className="flex items-center gap-2">
+                              <span>{asana.name}</span>
+                              <Badge variant="outline">{asana.difficulty}</Badge>
+                              <Badge variant="secondary">
+                                {asana.duration}min
+                              </Badge>
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent className="space-y-2">
+                            <div>
+                              <h4 className="font-semibold mb-1">Benefits:</h4>
+                              <ul className="list-disc pl-4">
+                                {asana.benefits.map((benefit, i) => (
+                                  <li key={i} className="text-sm">
+                                    {benefit}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            <div>
+                              <h4 className="font-semibold mb-1">Instructions:</h4>
+                              <ol className="list-decimal pl-4">
+                                {asana.instructions.map((instruction, i) => (
+                                  <li key={i} className="text-sm">
+                                    {instruction}
+                                  </li>
+                                ))}
+                              </ol>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  </TabsContent>
+
+                  <TabsContent value="exercises">
+                    <Accordion type="single" collapsible className="w-full">
+                      {aiResponse.exercises.map((exercise, index) => (
+                        <AccordionItem key={index} value={`exercise-${index}`}>
+                          <AccordionTrigger>
+                            <div className="flex items-center gap-2">
+                              <span>{exercise.name}</span>
+                              <Badge variant="outline">
+                                {exercise.difficulty}
+                              </Badge>
+                              <Badge variant="secondary">
+                                {exercise.duration}min
+                              </Badge>
+                            </div>
+                          </AccordionTrigger>
+                          <AccordionContent className="space-y-2">
+                            <div>
+                              <h4 className="font-semibold mb-1">Benefits:</h4>
+                              <ul className="list-disc pl-4">
+                                {exercise.benefits.map((benefit, i) => (
+                                  <li key={i} className="text-sm">
+                                    {benefit}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            <div>
+                              <h4 className="font-semibold mb-1">Instructions:</h4>
+                              <ol className="list-decimal pl-4">
+                                {exercise.instructions.map((instruction, i) => (
+                                  <li key={i} className="text-sm">
+                                    {instruction}
+                                  </li>
+                                ))}
+                              </ol>
+                            </div>
+                          </AccordionContent>
+                        </AccordionItem>
+                      ))}
+                    </Accordion>
+                  </TabsContent>
+
+                  <TabsContent value="resources">
+                    <div className="space-y-4">
+                      {aiResponse.resources.map((resource, index) => (
+                        <div
+                          key={index}
+                          className="p-4 border rounded-lg space-y-2"
+                        >
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold">{resource.title}</h3>
+                            <Badge>{resource.type}</Badge>
+                          </div>
+                          <p className="text-sm text-muted-foreground">
+                            {resource.description}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </div>
+            </ScrollArea>
+          )}
         </CardContent>
       </Card>
 
