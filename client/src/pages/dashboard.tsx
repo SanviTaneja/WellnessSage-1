@@ -30,10 +30,13 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
 
 export default function Dashboard() {
   const { user } = useAuth();
   const [aiResponse, setAiResponse] = useState<AIChatResponse | null>(null);
+  const { toast } = useToast();
 
   const form = useForm({
     resolver: zodResolver(insertExerciseSchema),
@@ -41,6 +44,8 @@ export default function Dashboard() {
       type: "",
       duration: 0,
       calories: 0,
+      userId: user?.id,
+      date: new Date(),
     },
   });
 
@@ -63,6 +68,13 @@ export default function Dashboard() {
     mutationFn: getAIRecommendations,
     onSuccess: (data) => {
       setAiResponse(data);
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "AI Assistant Error",
+        description: error.message || "Failed to get AI recommendations. Please try again later.",
+        variant: "destructive",
+      });
     },
   });
 
@@ -143,8 +155,9 @@ export default function Dashboard() {
             <Input
               className="flex-1"
               placeholder="Describe your fitness goals or health concerns..."
+              disabled={aiMutation.isPending}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
+                if (e.key === "Enter" && e.currentTarget.value.trim()) {
                   aiMutation.mutate(e.currentTarget.value);
                   e.currentTarget.value = "";
                 }
@@ -155,14 +168,28 @@ export default function Dashboard() {
               onClick={() => {
                 setAiResponse(null);
               }}
+              disabled={aiMutation.isPending}
             >
               Clear
             </Button>
           </div>
 
           {aiMutation.isPending && (
-            <div className="text-center py-4 text-muted-foreground">
-              Analyzing your request...
+            <div className="flex items-center justify-center py-8">
+              <div className="flex items-center gap-2">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <p className="text-sm text-muted-foreground">
+                  Analyzing your request...
+                </p>
+              </div>
+            </div>
+          )}
+
+          {aiMutation.isError && (
+            <div className="text-center py-4 text-destructive">
+              <p className="text-sm">
+                Unable to process your request at the moment. Please try again later.
+              </p>
             </div>
           )}
 
