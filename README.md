@@ -1,7 +1,7 @@
 Problem statement:
 In today’s fast-paced world, many individuals struggle to find time to focus on their health and fitness. With busy schedules, it becomes difficult for people to dedicate time to working out and researching for health solutions on top of it.While numerous articles and resources are available but they often lack the personalization needed or there is no availability of such things at one place to effectively address individual health  concerns. 
 
-Solution* :
+Solution:
 Our app solves this problem by offering a centralized wellness platform Fityog wherein user upon logging in can interact with AI-powered assistant (chatbot) integrated with the OpenAI API which is already with ML and NLP so that it gives refined and most relevant suggestions to users so that users which they can users while they interact with chatbot with health issues, such as anxiety, depression, weight loss, flexibility issues, calorie burn, or specific conditions like rounded shoulders. Based on the user’s input, the AI chatbot provides customized solutions, suggesting specific yoga asanas, exercise regimes, and relevant articles to users then and there so that users don't waste their time while researching.
 After receiving recommendations, users can log their workouts, track exercise duration, and calories burned directly in the app. The app stores the user’s exercise history for future reference and progress tracking. Additionally, the app features a directory of experts in different health fields, where users can book consultations for more personalized advice and detailed discussions about their fitness or health goals.
 
